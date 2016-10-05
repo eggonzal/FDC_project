@@ -11,6 +11,12 @@ var G = {
 	S : "",
 }
 
+var M = {
+	Q     : [],
+	Sigma : [],
+	d0    : "",
+	
+}
 parseRules = function (text) {
     
     G.V = [];
