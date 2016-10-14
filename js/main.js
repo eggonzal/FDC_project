@@ -5,24 +5,42 @@
  *
  */
 var G = {
-	R : {},
-	Sigma : ['a', 'b', 'ε'],
-	V : [],
-	S : "",
+	R : {},                  // Rules Dictionary
+	Sigma : ['a', 'b', 'ε'], // Alphabet
+	V : [],                  // Variables
+	S : "",                  // Initial Variable
 }
 
-var M = {
-	Q     : [],
-	Sigma : [],
-	d0    : "",
+// Delta is a dictionary where the keys are the states and the values are arrays where columns represent each symbol in Sigma
+/* Sample delta function mapping
+Delta = {
+	"state1": {
+		"a": ["state1", "state2"],
+		"b": []
+	},
+	"state2": {
+		"a": ["state2"],
+		"b": ["state1"]
+	}
 	
 }
+*/
+var M = {
+	Q     : [], // States
+	Sigma : [], // Alphabet
+	Delta : {}, // Transition Function matrix 
+	d0    : "", // Initial State
+	F     : [], // Final States
+}
+
+// Takes the text from the textarea and parses it to populate G
 parseRules = function (text) {
     
     G.V = [];
 	var varsRegex = /(.*?):(.*)/;
 	var lines = text.split('\n');
 	var lineNum = 1;
+	var LOGS = [];
 
 	separator = '|';
 
@@ -44,6 +62,7 @@ parseRules = function (text) {
     
 	$.each(lines, function (i, line) {
 		m = line.match(varsRegex);
+		console.log(m);
 		if (m && m.length > 1) {
 
 			// Parse the variable name
@@ -57,21 +76,25 @@ parseRules = function (text) {
 				// Remove empty rules
 				for (var index = 0; index < transitions.length; index++) {
 					if (transitions[index] === "")
-						transitions.splice(index, 1);
+						transitions.splice(index--, 1);
 				}
 
-				G.R[variable] = transitions
-					G.V[G.V.length] = variable;
+				G.R[variable]   = transitions
+				G.V[G.V.length] = variable;    // Better performance than G.V.push(variable);
 
 				// Use the first variable as the start rule
 				if (lineNum === 1)
 					G.S = variable;
 			}
-		} else
-			console.log('Syntax Error line ' + lineNum + ' : Expected ":" after variable name.');
+		} else{
+			msg = 'Syntax Error line ' + lineNum + ' : Expected ":" after variable name.';
+			console.log(msg);
+			LOGS[LOGS.length] = msg;
+		}
 		lineNum++;
-	});
+	}); // END .each lines
 
+	// Validate the Syntax of the rules and remove from G the ones with errors.
 	for (var key in G.R) {
 		var rules = G.R[key];
 		for (var index = 0; index < rules.length; index++) {
@@ -96,11 +119,13 @@ parseRules = function (text) {
 
 			// Remove invalid syntax
 			if (m === null) {
-				console.log("Syntax Error in rule definition " + key + ":"
-					 + rules.join(separator) + "\n   At '" + aRule + "':"
-					 + "\n      One or more symbols not in Σ={'" + G.Sigma.join("', '") + "'}"
-                     + "\n      Or number of terminal symbols is different than 1"
-                );
+				msg = "Syntax Error in rule definition " + key + ":"
+				    + rules.join(separator) + "\n   At '" + aRule + "':"
+				    + "\n      One or more symbols not in Σ={'" + G.Sigma.join("', '") + "'}"
+				    + "\n      Or number of terminal symbols is different than 1"
+				    ;
+				console.log( msg );
+				LOGS[LOGS.length] = msg;
 				removeKey(key);
 
 				// break for loop since the current rule has been removed
@@ -114,10 +139,14 @@ parseRules = function (text) {
 
 				// Remove invalid syntax
 				if (m === null) {
-					console.log("Syntax Error in rule definition " + key + ":"
-						 + rules.join(separator) + "\n   At '" + aRule + "':"
-						 + "\n      Rule ends with symbols different from the variables V={'" + G.V.join("', '") + "'}"
-						 + "\n      This can be caused by a previous rule breaking");
+					msg = "Syntax Error in rule definition " + key + ":"
+					    + rules.join(separator) + "\n   At '" + aRule + "':"
+					    + "\n      Rule ends with symbols different from the variables V={'" + G.V.join("', '") + "'}"
+					    + "\n      This can be caused by a previous rule breaking"
+					    ;
+					console.log(msg);
+					LOGS[LOGS.length] = msg;
+					
 					removeKey(key);
 
 					// break for loop since the current rule has been removed
@@ -129,7 +158,7 @@ parseRules = function (text) {
     
     console.log(G);
     return true;
-}
+}  // End Parse Rules
 
 // create all the onclick on change etc. events here
 initUI = function () {
