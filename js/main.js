@@ -4,11 +4,17 @@
  *
  *
  */
+
+var EPSILON = 'ε';
+var EXTRA_STATE = 'Ζ'  // A greek letter that looks like Z but it's really Ζ or zeta
+
+
 var G = {
-	R : {},                  // Rules Dictionary
-	Sigma : ['a', 'b', 'ε'], // Alphabet
-	V : [],                  // Variables
-	S : "",                  // Initial Variable
+	R : {},                       // Rules Dictionary
+	Sigma : ['a', 'b', EPSILON], // Alphabet
+	V : [],                       // Variables
+	S : "",                       // Initial Variable
+	needsExtraState : false,
 }
 
 // Delta is a dictionary where the keys are the states and the values are arrays where columns represent each symbol in Sigma
@@ -62,12 +68,20 @@ parseRules = function (text) {
     
 	$.each(lines, function (i, line) {
 		m = line.match(varsRegex);
-		console.log(m);
+		
 		if (m && m.length > 1) {
 
 			// Parse the variable name
 			var variable = m[1];
-
+			
+			// A variable can't be a symbol in the alphabet
+			if (G.Sigma.indexOf(variable) > -1) {
+                msg = 'Syntax Error line ' + lineNum + ' :\n\t variable "'+ variable +'" is a symbol in Σ={\'' + G.Sigma.join("', '") + '\'}';
+				LOGS[LOGS.length] = msg;
+				console.log(msg);
+				return true; // A continue in the loop
+            }
+			
 			// Parse the rule
 			if (m.length == 3) {
 				var ruleStr = m[2];
@@ -159,6 +173,110 @@ parseRules = function (text) {
     console.log(G);
     return true;
 }  // End Parse Rules
+
+// Constructs the M object based on the G object passed
+GtoM = function(){
+	var LOGS = [];
+	
+	// Start with the initial state
+	if (G.S.length) {
+        M.d0 = G.S
+		M.Sigma = G.Sigma.slice(); // Create a copy of Sigma
+    }
+	else{
+		msg = "Error:\n\tNo initial state found";
+		LOGS[LOGS.length] = msg;
+		console.log(msg);
+		return false;
+	}
+	
+	var matchVariables = "(.*?)((" + G.V.join('|') + ").*$)";
+	var re = new RegExp(matchVariables);
+
+	// Traverse the rules and create the Delta function matrix
+	$.each(G.V, function(i, variable){
+			var rules  = G.R[variable];
+			
+			// Prevent errors
+			if (rules === undefined) {
+                msg = "Error:\n\tVariable '"+ variable +"' not found in G.R";
+				LOGS[LOGS.length] = msg;
+				console.log(msg);
+            }
+			
+			// Parse the rules in G.S[variable]
+			for(var index = 0; index < rules.length; index++){
+				var aRule = rules[index];
+				console.log("Parsing rule: "+ aRule);
+				
+				var m = aRule.match(re);
+				var varsInRule = "";
+				if (m && m.length > 2) {
+					varsInRule = m[2];
+				}
+			
+				// Remove the variables from the rule string
+				var terminalSymbol = aRule.replace(varsInRule, "");
+				
+				var state = variable;
+				var nextState = varsInRule === "" && terminalSymbol !== EPSILON ? EXTRA_STATE : varsInRule;
+				
+				// Add the extra state if needed also mark it as Final state
+				if (nextState === EXTRA_STATE && M.Delta[EXTRA_STATE] === undefined){
+					generateDeltaEntry(EXTRA_STATE, EPSILON, EXTRA_STATE);
+					/*
+					initM_Delta(EXTRA_STATE);
+					if( M.F.indexOf(EXTRA_STATE) < 0 )
+						M.F[M.F.length] = EXTRA_STATE;
+					*/
+				}
+				
+				generateDeltaEntry(state, terminalSymbol, nextState);
+				
+			} // End parse rule
+	}); // END traverse each rules
+	
+}// END GtoM
+
+// Ensure the state entry in Delta is initialized
+var initM_Delta = function(state){
+	if (M.Delta[state] === undefined) {
+		M.Delta[state] = {};
+	}
+	
+	$.each(M.Sigma, function(index, symbol){
+		if (symbol === EPSILON)
+			return;
+		
+		if (M.Delta[state][symbol] === undefined)
+			M.Delta[state][symbol] = [];
+	});
+	
+}
+// Adds the transition to the Delta function matrix
+var generateDeltaEntry = function(state, symbol, nextState){
+	console.log("Generating d("+ state +", "+ symbol +") -> "+ nextState);
+	
+	// Prevents write errors in the dictionary
+	initM_Delta(state);
+	
+	// Add state to the M.Q array if not already there
+	if (M.Q.indexOf(state) < 0) 
+        M.Q[M.Q.length] = state;
+
+	// If it's a final state add it to the array M.F
+	var isFinal = nextState === EXTRA_STATE || (symbol === EPSILON && nextState === "");
+	if (isFinal && M.F.indexOf(state) < 0)
+		M.F[M.F.length] = state;
+
+	// Nothing else to do here
+	if (symbol === EPSILON)
+        return true;
+	
+	// Add a state to the transtition list if not already there  "d(state,symbol) -> nextState"
+	if (M.Delta[state][symbol].indexOf(nextState) < 0) 
+        M.Delta[state][symbol].push(nextState);
+}
 
 // create all the onclick on change etc. events here
 initUI = function () {
