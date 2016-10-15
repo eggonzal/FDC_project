@@ -14,7 +14,6 @@ var G = {
 	Sigma : ['a', 'b', EPSILON], // Alphabet
 	V : [],                       // Variables
 	S : "",                       // Initial Variable
-	needsExtraState : false,
 }
 
 // Delta is a dictionary where the keys are the states and the values are arrays where columns represent each symbol in Sigma
@@ -31,6 +30,17 @@ Delta = {
 	
 }
 */
+
+var clearM = function(){
+	M = {
+		Q     : [], // States
+		Sigma : [], // Alphabet
+		Delta : {}, // Transition Function matrix 
+		d0    : "", // Initial State
+		F     : [], // Final States
+	}
+}
+
 var M = {
 	Q     : [], // States
 	Sigma : [], // Alphabet
@@ -42,6 +52,9 @@ var M = {
 // Takes the text from the textarea and parses it to populate G
 parseRules = function (text) {
     
+	// Reset M
+	clearM();
+	
     G.V = [];
 	var varsRegex = /(.*?):(.*)/;
 	var lines = text.split('\n');
@@ -171,6 +184,8 @@ parseRules = function (text) {
 	}
     
     console.log(G);
+	GtoM();
+	console.log(M);
     return true;
 }  // End Parse Rules
 
@@ -293,7 +308,7 @@ initUI = function () {
 		lastScrollLeft = this.scrollLeft;
 		lastScrollLeftRatio = this.scrollLeft / this.scrollWidth;
 		parseRules(this.value);
-	});
+	}).click();
 
 	/*
 	 * @author
