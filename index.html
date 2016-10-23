@@ -14,6 +14,7 @@
     <script src="js/jquery-linedtextarea.js"></script>
 
     <title>Proyecto Final</title>
+    
 </head>
 
 <body>
@@ -21,6 +22,21 @@
     <p>Rules:</p>
     <div id="tools" >Insert: <button id="eps">&epsilon;</button></div>
     <textarea id="rule-input" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
+    <div id="result-box">
+
+    </div>
+    <br>
+    <p>Automata:</p>
+    <p>Provide Automata on format </p>
+    <ul>
+        <li> Q:{A,B,C}</li>
+        <li>&Sigma;:{a,b}</li>
+        <li>&delta;:{Axa->B,Axb->C,Bxb->C}</li>
+        <li>F:{C}</li>
+    </ul>
+    <div id="tools" >Insert: <button id="sigma">&Sigma;</button> <button id="delta">&delta;</button></div>
+
+    <textarea id="automata-input" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
     <div id="result-box">
 
     </div>
