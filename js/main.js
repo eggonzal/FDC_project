@@ -6,56 +6,97 @@
  */
 
 var EPSILON = 'ε';
-var EXTRA_STATE = 'Ζ'  // A greek letter that looks like Z but it's really Ζ or zeta
+var EXTRA_STATE = 'Ζ' // A greek letter that looks like Z but it's really Ζ or zeta
 
 
-var G = {
-	R : {},                       // Rules Dictionary
+	var G = {
+	R : {}, // Rules Dictionary
 	Sigma : ['a', 'b', EPSILON], // Alphabet
-	V : [],                       // Variables
-	S : "",                       // Initial Variable
+	V : [], // Variables
+	S : "", // Initial Variable
 }
 
 // Delta is a dictionary where the keys are the states and the values are arrays where columns represent each symbol in Sigma
 /* Sample delta function mapping
 Delta = {
-	"state1": {
-		"a": ["state1", "state2"],
-		"b": []
-	},
-	"state2": {
-		"a": ["state2"],
-		"b": ["state1"]
-	}
-	
+"state1": {
+"a": ["state1", "state2"],
+"b": []
+},
+"state2": {
+"a": ["state2"],
+"b": ["state1"]
 }
-*/
 
-var clearM = function(){
+}
+ */
+
+var clearM = function () {
 	M = {
-		Q     : [], // States
+		Q : [], // States
 		Sigma : [], // Alphabet
-		Delta : {}, // Transition Function matrix 
-		d0    : "", // Initial State
-		F     : [], // Final States
+		Delta : {}, // Transition Function matrix
+		d0 : "", // Initial State
+		F : [], // Final States
 	}
 }
 
 var M = {
-	Q     : [], // States
+	Q : [], // States
 	Sigma : [], // Alphabet
-	Delta : {}, // Transition Function matrix 
-	d0    : "", // Initial State
-	F     : [], // Final States
+	Delta : {}, // Transition Function matrix
+	d0 : "", // Initial State
+	F : [], // Final States
 }
+
+parseAutomata = function (text) {
+        var lines = text.split('\n');
+        var varsRegex = /(.*?):{(.+)}/;
+        
+        separator = ',';
+        
+        $.each(lines, function (i, line) {
+                if(line != ""){
+                        m = line.match(varsRegex);
+                        //console.log(m);
+                        if (m && m.length > 1) {
+                                switch(m[1]){
+                                        case 'Q':
+                                                console.log("Q");
+                                                break;
+                                        case 'δ':
+                                                console.log("δ");
+                                                break;
+                                        case 'Σ':
+                                                console.log("Σ");
+                                                break;
+                                        case 'So':
+                                                console.log("So");
+                                                break;
+                                        case 'F':
+                                                console.log("F");
+                                                break;
+                                        default :
+                                                console.log("Provided non valid Automata property");
+                                                break;
+                                }
+                                
+                        }else{
+                                console.log("Format error detected");
+                        }
+                }
+                
+        }); // END .each lines
+        
+}//End parseAutomata
 
 // Takes the text from the textarea and parses it to populate G
 parseRules = function (text) {
-    
+
 	// Reset M
 	clearM();
-	
-    G.V = [];
+
+	G.V = [];
 	var varsRegex = /(.*?):(.*)/;
 	var lines = text.split('\n');
 	var lineNum = 1;
@@ -78,23 +119,23 @@ parseRules = function (text) {
 			console.log(err);
 		}
 	}
-    
+
 	$.each(lines, function (i, line) {
 		m = line.match(varsRegex);
-		
+
 		if (m && m.length > 1) {
 
 			// Parse the variable name
 			var variable = m[1];
-			
+
 			// A variable can't be a symbol in the alphabet
 			if (G.Sigma.indexOf(variable) > -1) {
-                msg = 'Syntax Error line ' + lineNum + ' :\n\t variable "'+ variable +'" is a symbol in Σ={\'' + G.Sigma.join("', '") + '\'}';
+				msg = 'Syntax Error line ' + lineNum + ' :\n\t variable "' + variable + '" is a symbol in Σ={\'' + G.Sigma.join("', '") + '\'}';
 				LOGS[LOGS.length] = msg;
 				console.log(msg);
 				return true; // A continue in the loop
-            }
-			
+			}
+
 			// Parse the rule
 			if (m.length == 3) {
 				var ruleStr = m[2];
@@ -106,14 +147,14 @@ parseRules = function (text) {
 						transitions.splice(index--, 1);
 				}
 
-				G.R[variable]   = transitions
-				G.V[G.V.length] = variable;    // Better performance than G.V.push(variable);
+				G.R[variable] = transitions
+					G.V[G.V.length] = variable; // Better performance than G.V.push(variable);
 
 				// Use the first variable as the start rule
 				if (lineNum === 1)
 					G.S = variable;
 			}
-		} else{
+		} else {
 			msg = 'Syntax Error line ' + lineNum + ' : Expected ":" after variable name.';
 			console.log(msg);
 			LOGS[LOGS.length] = msg;
@@ -147,11 +188,10 @@ parseRules = function (text) {
 			// Remove invalid syntax
 			if (m === null) {
 				msg = "Syntax Error in rule definition " + key + ":"
-				    + rules.join(separator) + "\n   At '" + aRule + "':"
-				    + "\n      One or more symbols not in Σ={'" + G.Sigma.join("', '") + "'}"
-				    + "\n      Or number of terminal symbols is different than 1"
-				    ;
-				console.log( msg );
+					 + rules.join(separator) + "\n   At '" + aRule + "':"
+					 + "\n      One or more symbols not in Σ={'" + G.Sigma.join("', '") + "'}"
+					 + "\n      Or number of terminal symbols is different than 1";
+				console.log(msg);
 				LOGS[LOGS.length] = msg;
 				removeKey(key);
 
@@ -167,13 +207,12 @@ parseRules = function (text) {
 				// Remove invalid syntax
 				if (m === null) {
 					msg = "Syntax Error in rule definition " + key + ":"
-					    + rules.join(separator) + "\n   At '" + aRule + "':"
-					    + "\n      Rule ends with symbols different from the variables V={'" + G.V.join("', '") + "'}"
-					    + "\n      This can be caused by a previous rule breaking"
-					    ;
+						 + rules.join(separator) + "\n   At '" + aRule + "':"
+						 + "\n      Rule ends with symbols different from the variables V={'" + G.V.join("', '") + "'}"
+						 + "\n      This can be caused by a previous rule breaking";
 					console.log(msg);
 					LOGS[LOGS.length] = msg;
-					
+
 					removeKey(key);
 
 					// break for loop since the current rule has been removed
@@ -182,102 +221,101 @@ parseRules = function (text) {
 			}
 		}
 	}
-    
-    console.log(G);
+
+	console.log(G);
 	GtoM();
 	console.log(M);
-    return true;
-}  // End Parse Rules
+	return true;
+} // End Parse Rules
 
 // Constructs the M object based on the G object passed
-GtoM = function(){
+GtoM = function () {
 	var LOGS = [];
-	
+
 	// Start with the initial state
 	if (G.S.length) {
-        M.d0 = G.S
-		M.Sigma = G.Sigma.slice(); // Create a copy of Sigma
-    }
-	else{
+		M.d0 = G.S
+			M.Sigma = G.Sigma.slice(); // Create a copy of Sigma
+	} else {
 		msg = "Error:\n\tNo initial state found";
 		LOGS[LOGS.length] = msg;
 		console.log(msg);
 		return false;
 	}
-	
+
 	var matchVariables = "(.*?)((" + G.V.join('|') + ").*$)";
 	var re = new RegExp(matchVariables);
 
 	// Traverse the rules and create the Delta function matrix
-	$.each(G.V, function(i, variable){
-			var rules  = G.R[variable];
-			
-			// Prevent errors
-			if (rules === undefined) {
-                msg = "Error:\n\tVariable '"+ variable +"' not found in G.R";
-				LOGS[LOGS.length] = msg;
-				console.log(msg);
-            }
-			
-			// Parse the rules in G.S[variable]
-			for(var index = 0; index < rules.length; index++){
-				var aRule = rules[index];
-				console.log("Parsing rule: "+ aRule);
-				
-				var m = aRule.match(re);
-				var varsInRule = "";
-				if (m && m.length > 2) {
-					varsInRule = m[2];
-				}
-			
-				// Remove the variables from the rule string
-				var terminalSymbol = aRule.replace(varsInRule, "");
-				
-				var state = variable;
-				var nextState = varsInRule === "" && terminalSymbol !== EPSILON ? EXTRA_STATE : varsInRule;
-				
-				// Add the extra state if needed also mark it as Final state
-				if (nextState === EXTRA_STATE && M.Delta[EXTRA_STATE] === undefined){
-					generateDeltaEntry(EXTRA_STATE, EPSILON, EXTRA_STATE);
-					/*
-					initM_Delta(EXTRA_STATE);
-					if( M.F.indexOf(EXTRA_STATE) < 0 )
-						M.F[M.F.length] = EXTRA_STATE;
-					*/
-				}
-				
-				generateDeltaEntry(state, terminalSymbol, nextState);
-				
-			} // End parse rule
+	$.each(G.V, function (i, variable) {
+		var rules = G.R[variable];
+
+		// Prevent errors
+		if (rules === undefined) {
+			msg = "Error:\n\tVariable '" + variable + "' not found in G.R";
+			LOGS[LOGS.length] = msg;
+			console.log(msg);
+		}
+
+		// Parse the rules in G.S[variable]
+		for (var index = 0; index < rules.length; index++) {
+			var aRule = rules[index];
+			console.log("Parsing rule: " + aRule);
+
+			var m = aRule.match(re);
+			var varsInRule = "";
+			if (m && m.length > 2) {
+				varsInRule = m[2];
+			}
+
+			// Remove the variables from the rule string
+			var terminalSymbol = aRule.replace(varsInRule, "");
+
+			var state = variable;
+			var nextState = varsInRule === "" && terminalSymbol !== EPSILON ? EXTRA_STATE : varsInRule;
+
+			// Add the extra state if needed also mark it as Final state
+			if (nextState === EXTRA_STATE && M.Delta[EXTRA_STATE] === undefined) {
+				generateDeltaEntry(EXTRA_STATE, EPSILON, EXTRA_STATE);
+				/*
+				initM_Delta(EXTRA_STATE);
+				if( M.F.indexOf(EXTRA_STATE) < 0 )
+				M.F[M.F.length] = EXTRA_STATE;
+				 */
+			}
+
+			generateDeltaEntry(state, terminalSymbol, nextState);
+
+		} // End parse rule
 	}); // END traverse each rules
-	
-}// END GtoM
+
+} // END GtoM
 
 // Ensure the state entry in Delta is initialized
-var initM_Delta = function(state){
+var initM_Delta = function (state) {
 	if (M.Delta[state] === undefined) {
 		M.Delta[state] = {};
 	}
-	
-	$.each(M.Sigma, function(index, symbol){
+
+	$.each(M.Sigma, function (index, symbol) {
 		if (symbol === EPSILON)
 			return;
-		
+
 		if (M.Delta[state][symbol] === undefined)
 			M.Delta[state][symbol] = [];
 	});
-	
+
 }
 // Adds the transition to the Delta function matrix
-var generateDeltaEntry = function(state, symbol, nextState){
-	console.log("Generating d("+ state +", "+ symbol +") -> "+ nextState);
-	
+var generateDeltaEntry = function (state, symbol, nextState) {
+	console.log("Generating d(" + state + ", " + symbol + ") -> " + nextState);
+
 	// Prevents write errors in the dictionary
 	initM_Delta(state);
-	
+
 	// Add state to the M.Q array if not already there
-	if (M.Q.indexOf(state) < 0) 
-        M.Q[M.Q.length] = state;
+	if (M.Q.indexOf(state) < 0)
+		M.Q[M.Q.length] = state;
 
 	// If it's a final state add it to the array M.F
 	var isFinal = nextState === EXTRA_STATE || (symbol === EPSILON && nextState === "");
@@ -286,11 +324,11 @@ var generateDeltaEntry = function(state, symbol, nextState){
 
 	// Nothing else to do here
 	if (symbol === EPSILON)
-        return true;
-	
+		return true;
+
 	// Add a state to the transtition list if not already there  "d(state,symbol) -> nextState"
-	if (M.Delta[state][symbol].indexOf(nextState) < 0) 
-        M.Delta[state][symbol].push(nextState);
+	if (M.Delta[state][symbol].indexOf(nextState) < 0)
+		M.Delta[state][symbol].push(nextState);
 }
 
 // create all the onclick on change etc. events here
@@ -307,7 +345,13 @@ initUI = function () {
 		lastScrollTop = this.scrollTop;
 		lastScrollLeft = this.scrollLeft;
 		lastScrollLeftRatio = this.scrollLeft / this.scrollWidth;
-		parseRules(this.value);
+                 if (document.activeElement && document.activeElement.id.toLowerCase() == "rule-input") 
+                {       
+                        parseRules(this.value);
+                }
+                else if(document.activeElement && document.activeElement.id.toLowerCase() == "automata-input"){
+                        parseAutomata(this.value);
+                }
 	}).click();
 
 	/*
@@ -358,6 +402,12 @@ initUI = function () {
 
 	$('#eps').click(function (e) {
 		return insertSymbolIntoText("ε", $("#rule-input"), e);
+	});
+        $('#sigma').click(function (e) {
+		return insertSymbolIntoText("Σ", $("#automata-input"), e);
+	});
+        $('#delta').click(function (e) {
+		return insertSymbolIntoText("δ", $("#automata-input"), e);
 	});
 
 	// Target a single one
