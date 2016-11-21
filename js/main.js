@@ -1,4 +1,4 @@
-/* This file will have all the mechanics of the app
+﻿/* This file will have all the mechanics of the app
  *
  * Programa que recibe una gramática regular y produce un autómata finito equivalente y viceversa.
  *
@@ -53,6 +53,10 @@ parseAutomata = function (text) {
         var lines = text.split('\n');
         var varsRegex = /(.*?):{(.+)}/;
         
+        var V  = new Array();
+        var Σ,S,R;
+        var temp = {};
+        
         separator = ',';
         
         $.each(lines, function (i, line) {
@@ -62,28 +66,83 @@ parseAutomata = function (text) {
                         if (m && m.length > 1) {
                                 switch(m[1]){
                                         case 'Q':
-                                                console.log("Q");
+                                                //Q
+                                                V = m[2].split(separator);
+                                                console.log(V);
+                                                //console.log("V: " + m[2].split(separator));
                                                 break;
                                         case 'δ':
                                                 console.log("δ");
+                                                //console.log(Object.keys(V).length);
+                                                if(V.length != 0){
+                                                        
+                                                         $.each(V,function(i,state){
+                                                                temp[state] = "";
+                                                         });
+                                                         //console.log(temp);
+                                                        $.each(m[2].split(separator),function(i,rule){
+                                                                
+                                                                if(V.indexOf(rule.substring(0,1))!= -1){
+                                                                        temp[rule.substring(0,1)] =  temp[rule.substring(0,1)]+rule.substring(2,3) +rule.substring(5,6) +"|";
+                                                                        
+                                                                }else{
+                                                                        console.log("State not in V");
+                                                                }
+                                                                //console.log(temp);
+                                                                //console.log(rule);
+                                                        });
+                                                }
                                                 break;
                                         case 'Σ':
-                                                console.log("Σ");
+                                               // console.log("Σ");
+                                               //Q
+                                                Σ = m[2].split(separator);
+                                                //console.log("Σ: " + m[2].split(separator));
                                                 break;
                                         case 'So':
-                                                console.log("So");
+                                                //console.log("So");
+                                                //S
+                                                S = m[2].split(separator);
+                                                console.log("S: " + m[2].split(separator));
                                                 break;
                                         case 'F':
-                                                console.log("F");
+                                                //console.log("F");
+                                                 $.each(m[2].split(separator),function(i,rule){
+                                                        if(V.indexOf(rule.substring(0,1))!= -1){
+                                                                        if(temp[rule.substring(0,1)] == ""){
+                                                                             temp[rule.substring(0,1)] =  "ε";   
+                                                                        }else{
+                                                                                temp[rule.substring(0,1)] =  temp[rule.substring(0,1)]+"|ε";
+                                                                        }
+                                                                               
+                                                        }else{
+                                                                console.log("State not in V");
+                                                        }
+                                                 });
+                                                 console.log (temp);
                                                 break;
                                         default :
                                                 console.log("Provided non valid Automata property");
                                                 break;
                                 }
-                                
+                                for (var key in temp) {
+                                        var value = temp[key];
+                                        if(value.substring(value.length -1,value.length) == "|"){
+                                                temp[key] = value.substring(0,value.length -1);
+                                        }
+                                        //console.log(value.length);
+                                        // Use `key` and `value`
+                                }
+                                R = temp;
+                                console.log("Σ: " + Σ);
+                                console.log("S: " + S);
+                                console.log("R: ");
+                                console.log(R);
+                                console.log("V: " + V);
                         }else{
                                 console.log("Format error detected");
                         }
+                        
                 }
                 
         }); // END .each lines
