@@ -82,12 +82,15 @@ parseAutomata = function (text) {
                                                          //console.log(temp);
                                                         $.each(m[2].split(separator),function(i,rule){
                                                                 
-                                                                if(V.indexOf(rule.substring(0,1))!= -1 && Σ.indexOf(rule.substring(2,3))!=-1){
+                                                                if(V.indexOf(rule.substring(0,1))!= -1 && Σ.indexOf(rule.substring(2,3))!=-1 && V.indexOf(rule.substring(5,6))!= -1){
                                                                         temp[rule.substring(0,1)] =  temp[rule.substring(0,1)]+rule.substring(2,3) +rule.substring(5,6) +"|";
                                                                         
                                                                 }else{
                                                                         if(V.indexOf(rule.substring(0,1))== -1){
                                                                                 console.log("State "+rule.substring(0,1)+" not in V");
+                                                                        }
+                                                                        if(V.indexOf(rule.substring(5,6))== -1){
+                                                                                console.log("State "+rule.substring(5,6)+" not in V");
                                                                         }
                                                                         if(Σ.indexOf(rule.substring(2,3))== -1){
                                                                                 console.log("Symbol "+rule.substring(2,3)+" not in Σ");
