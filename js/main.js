@@ -68,11 +68,11 @@ parseAutomata = function (text) {
                                         case 'Q':
                                                 //Q
                                                 V = m[2].split(separator);
-                                                console.log(V);
+                                                //console.log(V);
                                                 //console.log("V: " + m[2].split(separator));
                                                 break;
                                         case 'δ':
-                                                console.log("δ");
+                                                //console.log("δ");
                                                 //console.log(Object.keys(V).length);
                                                 if(V.length != 0){
                                                         
@@ -103,7 +103,7 @@ parseAutomata = function (text) {
                                                 //console.log("So");
                                                 //S
                                                 S = m[2].split(separator);
-                                                console.log("S: " + m[2].split(separator));
+                                                //console.log("S: " + m[2].split(separator));
                                                 break;
                                         case 'F':
                                                 //console.log("F");
@@ -119,7 +119,7 @@ parseAutomata = function (text) {
                                                                 console.log("State not in V");
                                                         }
                                                  });
-                                                 console.log (temp);
+                                                 //console.log (temp);
                                                 break;
                                         default :
                                                 console.log("Provided non valid Automata property");
