@@ -108,8 +108,18 @@ parseAutomata = function (text) {
                                         case 'So':
                                                 //console.log("So");
                                                 //S
-                                                S = m[2].split(separator);
-                                                //console.log("S: " + m[2].split(separator));
+                                                if(Object.keys(m[2].split(separator)).length ==1){
+                                                      S = m[2].split(separator);  
+                                                }else{
+                                                        if(Object.keys(m[2].split(separator)).length ==0){
+                                                              console.log("No initial State provided");  
+                                                        }else{
+                                                              console.log("Multiple initial States provided");    
+                                                        }
+                                                        error = true;
+                                                }
+                                                
+                                                //console.log("S: " + S);
                                                 break;
                                         case 'F':
                                                 //console.log("F");
