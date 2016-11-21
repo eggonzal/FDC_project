@@ -495,6 +495,10 @@ initUI = function () {
 
 	// Target a single one
 	$("#rule-input").linedtextarea();
+	
+	  jQuery('.linedtextarea').on('focusin', function () { //JLV
+       document.getElementById('rule-output').value="";
+     });
     
     jQuery('.JLalpabhet').on('focusout', function () { //JLV 
           G.Sigma=this.value.split(",");
