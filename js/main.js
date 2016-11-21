@@ -495,6 +495,27 @@ initUI = function () {
 
 	// Target a single one
 	$("#rule-input").linedtextarea();
+    
+    jQuery('.JLalpabhet').on('focusout', function () { //JLV 
+          G.Sigma=this.value.split(",");
+          G.Sigma.push(EPSILON);
+          console.log(this.value.split(","));
+     });//JLV
+
+    jQuery('.getTran').on('click', function () { //JLV 
+     
+     for (var index = 0; index < Object.keys(M.Q).length; index++) {
+         for (var ine = 0; ine < Object.keys(M.Sigma).length; ine++) {
+            letra=M.Sigma[ine];
+                if(M.Delta[M.Q[index]][letra] != "" && M.Delta[M.Q[index]][letra] != undefined){
+                 document.getElementById('rule-output').value = document.getElementById('rule-output').value + "\n"+("* d(" + M.Q[index] + ", " + letra  + ") -> " + M.Delta[M.Q[index]][letra] );   
+                }
+          }
+     }
+     
+     });//JLV
+
+
 
 }
 
