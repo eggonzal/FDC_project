@@ -56,11 +56,11 @@ parseAutomata = function (text) {
         var V  = new Array();
         var Σ,S,R;
         var temp = {};
-        
+        var error = false;
         separator = ',';
         
         $.each(lines, function (i, line) {
-                if(line != ""){
+                if(line != "" && !error){
                         m = line.match(varsRegex);
                         //console.log(m);
                         if (m && m.length > 1) {
@@ -82,11 +82,17 @@ parseAutomata = function (text) {
                                                          //console.log(temp);
                                                         $.each(m[2].split(separator),function(i,rule){
                                                                 
-                                                                if(V.indexOf(rule.substring(0,1))!= -1){
+                                                                if(V.indexOf(rule.substring(0,1))!= -1 && Σ.indexOf(rule.substring(2,3))!=-1){
                                                                         temp[rule.substring(0,1)] =  temp[rule.substring(0,1)]+rule.substring(2,3) +rule.substring(5,6) +"|";
                                                                         
                                                                 }else{
-                                                                        console.log("State not in V");
+                                                                        if(V.indexOf(rule.substring(0,1))== -1){
+                                                                                console.log("State "+rule.substring(0,1)+" not in V");
+                                                                        }
+                                                                        if(Σ.indexOf(rule.substring(2,3))== -1){
+                                                                                console.log("Symbol "+rule.substring(2,3)+" not in Σ");
+                                                                        }
+                                                                        error = true;
                                                                 }
                                                                 //console.log(temp);
                                                                 //console.log(rule);
@@ -117,12 +123,14 @@ parseAutomata = function (text) {
                                                                                
                                                         }else{
                                                                 console.log("State not in V");
+                                                                error = true;
                                                         }
                                                  });
                                                  //console.log (temp);
                                                 break;
                                         default :
                                                 console.log("Provided non valid Automata property");
+                                                error = true;
                                                 break;
                                 }
                                 for (var key in temp) {
@@ -133,14 +141,17 @@ parseAutomata = function (text) {
                                         //console.log(value.length);
                                         // Use `key` and `value`
                                 }
-                                R = temp;
-                                console.log("Σ: " + Σ);
-                                console.log("S: " + S);
-                                console.log("R: ");
-                                console.log(R);
-                                console.log("V: " + V);
+                                if(!error && Σ!=undefined && S!=undefined){
+                                        R = temp;
+                                        console.log("Σ: " + Σ);
+                                        console.log("S: " + S);
+                                        console.log("R: ");
+                                        console.log(R);
+                                        console.log("V: " + V);
+                                }
                         }else{
                                 console.log("Format error detected");
+                                error = true;
                         }
                         
                 }
