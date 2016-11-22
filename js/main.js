@@ -8,12 +8,17 @@
 var EPSILON = 'ε';
 var EXTRA_STATE = 'Ζ' // A greek letter that looks like Z but it's really Ζ or zeta
 
+	//Automata to Grammar variables.
+	var V = new Array();
+var Σ = "";
+var S = "";
+var R = {};
 
-	var G = {
-	R : {}, // Rules Dictionary
-	Sigma : ['a', 'b', EPSILON], // Alphabet
-	V : [], // Variables
-	S : "", // Initial Variable
+var G = {
+	R: {}, // Rules Dictionary
+	Sigma: ['a', 'b', EPSILON], // Alphabet
+	V: [], // Variables
+	S: "", // Initial Variable
 }
 
 // Delta is a dictionary where the keys are the states and the values are arrays where columns represent each symbol in Sigma
@@ -33,145 +38,143 @@ Delta = {
 
 var clearM = function () {
 	M = {
-		Q : [], // States
-		Sigma : [], // Alphabet
-		Delta : {}, // Transition Function matrix
-		d0 : "", // Initial State
-		F : [], // Final States
+		Q: [], // States
+		Sigma: [], // Alphabet
+		Delta: {}, // Transition Function matrix
+		d0: "", // Initial State
+		F: [], // Final States
 	}
 }
 
 var M = {
-	Q : [], // States
-	Sigma : [], // Alphabet
-	Delta : {}, // Transition Function matrix
-	d0 : "", // Initial State
-	F : [], // Final States
+	Q: [], // States
+	Sigma: [], // Alphabet
+	Delta: {}, // Transition Function matrix
+	d0: "", // Initial State
+	F: [], // Final States
 }
 
 parseAutomata = function (text) {
-        var lines = text.split('\n');
-        var varsRegex = /(.*?):{(.+)}/;
-        
-        var V  = new Array();
-        var Σ,S,R;
-        var temp = {};
-        var error = false;
-        separator = ',';
-        
-        $.each(lines, function (i, line) {
-                if(line != "" && !error){
-                        m = line.match(varsRegex);
-                        //console.log(m);
-                        if (m && m.length > 1) {
-                                switch(m[1]){
-                                        case 'Q':
-                                                //Q
-                                                V = m[2].split(separator);
-                                                //console.log(V);
-                                                //console.log("V: " + m[2].split(separator));
-                                                break;
-                                        case 'δ':
-                                                //console.log("δ");
-                                                //console.log(Object.keys(V).length);
-                                                if(V.length != 0){
-                                                        
-                                                         $.each(V,function(i,state){
-                                                                temp[state] = "";
-                                                         });
-                                                         //console.log(temp);
-                                                        $.each(m[2].split(separator),function(i,rule){
-                                                                
-                                                                if(V.indexOf(rule.substring(0,1))!= -1 && Σ.indexOf(rule.substring(2,3))!=-1 && V.indexOf(rule.substring(5,6))!= -1){
-                                                                        temp[rule.substring(0,1)] =  temp[rule.substring(0,1)]+rule.substring(2,3) +rule.substring(5,6) +"|";
-                                                                        
-                                                                }else{
-                                                                        if(V.indexOf(rule.substring(0,1))== -1){
-                                                                                console.log("State "+rule.substring(0,1)+" not in V");
-                                                                        }
-                                                                        if(V.indexOf(rule.substring(5,6))== -1){
-                                                                                console.log("State "+rule.substring(5,6)+" not in V");
-                                                                        }
-                                                                        if(Σ.indexOf(rule.substring(2,3))== -1){
-                                                                                console.log("Symbol "+rule.substring(2,3)+" not in Σ");
-                                                                        }
-                                                                        error = true;
-                                                                }
-                                                                //console.log(temp);
-                                                                //console.log(rule);
-                                                        });
-                                                }
-                                                break;
-                                        case 'Σ':
-                                               // console.log("Σ");
-                                               //Q
-                                                Σ = m[2].split(separator);
-                                                //console.log("Σ: " + m[2].split(separator));
-                                                break;
-                                        case 'So':
-                                                //console.log("So");
-                                                //S
-                                                if(Object.keys(m[2].split(separator)).length ==1){
-                                                      S = m[2].split(separator);  
-                                                }else{
-                                                        if(Object.keys(m[2].split(separator)).length ==0){
-                                                              console.log("No initial State provided");  
-                                                        }else{
-                                                              console.log("Multiple initial States provided");    
-                                                        }
-                                                        error = true;
-                                                }
-                                                
-                                                //console.log("S: " + S);
-                                                break;
-                                        case 'F':
-                                                //console.log("F");
-                                                 $.each(m[2].split(separator),function(i,rule){
-                                                        if(V.indexOf(rule.substring(0,1))!= -1){
-                                                                        if(temp[rule.substring(0,1)] == ""){
-                                                                             temp[rule.substring(0,1)] =  "ε";   
-                                                                        }else{
-                                                                                temp[rule.substring(0,1)] =  temp[rule.substring(0,1)]+"|ε";
-                                                                        }
-                                                                               
-                                                        }else{
-                                                                console.log("State not in V");
-                                                                error = true;
-                                                        }
-                                                 });
-                                                 //console.log (temp);
-                                                break;
-                                        default :
-                                                console.log("Provided non valid Automata property");
-                                                error = true;
-                                                break;
-                                }
-                                for (var key in temp) {
-                                        var value = temp[key];
-                                        if(value.substring(value.length -1,value.length) == "|"){
-                                                temp[key] = value.substring(0,value.length -1);
-                                        }
-                                        //console.log(value.length);
-                                        // Use `key` and `value`
-                                }
-                                if(!error && Σ!=undefined && S!=undefined){
-                                        R = temp;
-                                        console.log("Σ: " + Σ);
-                                        console.log("S: " + S);
-                                        console.log("R: ");
-                                        console.log(R);
-                                        console.log("V: " + V);
-                                }
-                        }else{
-                                console.log("Format error detected");
-                                error = true;
-                        }
-                        
-                }
-                
-        }); // END .each lines
-        
-}//End parseAutomata
+	var lines = text.split('\n');
+	var varsRegex = /(.*?):{(.+)}/;
+
+	var temp = {};
+	var error = false;
+	separator = ',';
+
+	$.each(lines, function (i, line) {
+		if (line != "" && !error) {
+			m = line.match(varsRegex);
+			//console.log(m);
+			if (m && m.length > 1) {
+				switch (m[1]) {
+				case 'Q':
+					//Q
+					V = m[2].split(separator);
+					//console.log(V);
+					//console.log("V: " + m[2].split(separator));
+					break;
+				case 'δ':
+					//console.log("δ");
+					//console.log(Object.keys(V).length);
+					if (V.length != 0) {
+
+						$.each(V, function (i, state) {
+							temp[state] = "";
+						});
+						//console.log(temp);
+						$.each(m[2].split(separator), function (i, rule) {
+
+							if (V.indexOf(rule.substring(0, 1)) != -1 && Σ.indexOf(rule.substring(2, 3)) != -1 && V.indexOf(rule.substring(5, 6)) != -1) {
+								temp[rule.substring(0, 1)] = temp[rule.substring(0, 1)] + rule.substring(2, 3) + rule.substring(5, 6) + "|";
+
+							} else {
+								if (V.indexOf(rule.substring(0, 1)) == -1) {
+									console.log("State " + rule.substring(0, 1) + " not in V");
+								}
+								if (V.indexOf(rule.substring(5, 6)) == -1) {
+									console.log("State " + rule.substring(5, 6) + " not in V");
+								}
+								if (Σ.indexOf(rule.substring(2, 3)) == -1) {
+									console.log("Symbol " + rule.substring(2, 3) + " not in Σ");
+								}
+								error = true;
+							}
+							//console.log(temp);
+							//console.log(rule);
+						});
+					}
+					break;
+				case 'Σ':
+					// console.log("Σ");
+					//Q
+					Σ = m[2].split(separator);
+					//console.log("Σ: " + m[2].split(separator));
+					break;
+				case 'So':
+					//console.log("So");
+					//S
+					if (Object.keys(m[2].split(separator)).length == 1) {
+						S = m[2].split(separator);
+					} else {
+						if (Object.keys(m[2].split(separator)).length == 0) {
+							console.log("No initial State provided");
+						} else {
+							console.log("Multiple initial States provided");
+						}
+						error = true;
+					}
+
+					//console.log("S: " + S);
+					break;
+				case 'F':
+					//console.log("F");
+					$.each(m[2].split(separator), function (i, rule) {
+						if (V.indexOf(rule.substring(0, 1)) != -1) {
+							if (temp[rule.substring(0, 1)] == "") {
+								temp[rule.substring(0, 1)] = "ε";
+							} else {
+								temp[rule.substring(0, 1)] = temp[rule.substring(0, 1)] + "|ε";
+							}
+
+						} else {
+							console.log("State not in V");
+							error = true;
+						}
+					});
+					//console.log (temp);
+					break;
+				default:
+					console.log("Provided non valid Automata property");
+					error = true;
+					break;
+				}
+				for (var key in temp) {
+					var value = temp[key];
+					if (value.substring(value.length - 1, value.length) == "|") {
+						temp[key] = value.substring(0, value.length - 1);
+					}
+					//console.log(value.length);
+					// Use `key` and `value`
+				}
+				if (!error && Σ != undefined && S != undefined) {
+					R = temp;
+					console.log("Σ: " + Σ);
+					console.log("S: " + S);
+					console.log("R: ");
+					console.log(R);
+					console.log("V: " + V);
+				}
+			} else {
+				console.log("Format error detected");
+				error = true;
+			}
+
+		}
+
+	}); // END .each lines
+
+} //End parseAutomata
 
 // Takes the text from the textarea and parses it to populate G
 parseRules = function (text) {
@@ -428,15 +431,13 @@ initUI = function () {
 		lastScrollTop = this.scrollTop;
 		lastScrollLeft = this.scrollLeft;
 		lastScrollLeftRatio = this.scrollLeft / this.scrollWidth;
-                 if (document.activeElement && document.activeElement.id.toLowerCase() == "rule-input") 
-                {       
-                        parseRules(this.value);
-                }
-                else if(document.activeElement && document.activeElement.id.toLowerCase() == "automata-input"){
-                        parseAutomata(this.value);
-                }
+		if (document.activeElement && document.activeElement.id.toLowerCase() == "rule-input") {
+			parseRules(this.value);
+		} else if (document.activeElement && document.activeElement.id.toLowerCase() == "automata-input") {
+			parseAutomata(this.value);
+		}
 	}).click();
-
+        
 	/*
 	 * @author
 	 * @function
@@ -475,7 +476,7 @@ initUI = function () {
 				} else {
 					elem.focus();
 					$.event.trigger({
-						type : 'keypress'
+						type: 'keypress'
 					});
 					return false;
 				}
@@ -486,46 +487,60 @@ initUI = function () {
 	$('#eps').click(function (e) {
 		return insertSymbolIntoText("ε", $("#rule-input"), e);
 	});
-        $('#sigma').click(function (e) {
+	$('#sigma').click(function (e) {
 		return insertSymbolIntoText("Σ", $("#automata-input"), e);
 	});
-        $('#delta').click(function (e) {
+	$('#delta').click(function (e) {
 		return insertSymbolIntoText("δ", $("#automata-input"), e);
 	});
 
 	// Target a single one
 	$("#rule-input").linedtextarea();
-	
-	  jQuery('.linedtextarea').on('focusin', function () { //JLV
-       document.getElementById('rule-output').value="";
-     });
-    
-    jQuery('.JLalpabhet').on('focusout', function () { //JLV 
-          G.Sigma=this.value.split(",");
-          G.Sigma.push(EPSILON);
-          console.log(this.value.split(","));
-     });//JLV
+	$("#automata-input").linedtextarea();
 
-    jQuery('.getTran').on('click', function () { //JLV 
-     
-     for (var index = 0; index < Object.keys(M.Q).length; index++) {
-         for (var ine = 0; ine < Object.keys(M.Sigma).length; ine++) {
-            letra=M.Sigma[ine];
-                if(M.Delta[M.Q[index]][letra] != "" && M.Delta[M.Q[index]][letra] != undefined){
-                 document.getElementById('rule-output').value = document.getElementById('rule-output').value + "\n"+("* d(" + M.Q[index] + ", " + letra  + ") -> " + M.Delta[M.Q[index]][letra] );   
-                }
-          }
-     }
-     
-     });//JLV
+	jQuery('.linedtextarea').on('focusin', function () { //JLV
+		document.getElementById('rule-output').value = "";
+	});
 
+	jQuery('.JLalpabhet').on('focusout', function () { //JLV
+		G.Sigma = this.value.split(",");
+		G.Sigma.push(EPSILON);
+		console.log(this.value.split(","));
+	}); //JLV
 
+	jQuery('.getGram').on('click', function () { //JLV
+                var txt = "";
+                
+                var prodRules = "";
+                
+		for (var index = 0; index < Object.keys(R).length; index++) {
+			var key =Object.keys(R)[index];
+                        prodRules += key + ": " + R[key] + "\n";
+		}
+                txt = "V: " + V + "\n" + "Σ: " + Σ +"\n"+ "S: " + S +"\n"+prodRules;
+                document.getElementById('automata-output').value = txt;
+	}); //JLV
+	jQuery('.getTran').on('click', function () { //JLV
+                document.getElementById('rule-output').value = "";
+		for (var index = 0; index < Object.keys(M.Q).length; index++) {
+			for (var ine = 0; ine < Object.keys(M.Sigma).length; ine++) {
+				letra = M.Sigma[ine];
+				if (M.Delta[M.Q[index]][letra] != "" && M.Delta[M.Q[index]][letra] != undefined) {
+					document.getElementById('rule-output').value = document.getElementById('rule-output').value + "\n" + ("* d(" + M.Q[index] + ", " + letra + ") -> " + M.Delta[M.Q[index]][letra]);
+				}
+			}
+		}
 
+	}); //JLV
+        initAutomataTxt = "Q:{A,B,C}\nΣ:{a,b}\nδ:{Axa->B,Axb->C,Bxb->C}\nSo:{A}\nF:{C}";
+        jQuery('#automata-input').val(initAutomataTxt);
+        parseAutomata(initAutomataTxt);
+        
 }
 
 // All the code should run in this function
 $(document).ready(function () {
 	/* Code Starts Here */
 	initUI();
-
+        
 });

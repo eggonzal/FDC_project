@@ -24,7 +24,7 @@
       Enter your alphabe separated by comma: <input type="text" class="JLalpabhet"><br>
     <div class="test1" style="display:inline-flex">
     <textarea id="rule-input" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
-    <button type="button" class="getTran" onclick="">Get Transitions</button>
+    <button type="button" class="getTran" onclick="">Get Automata</button>
     <textarea readonly id="rule-output" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
     </div>
     <div id="result-box">
@@ -41,12 +41,11 @@
         <li>F:{C}</li>
     </ul>
     <div id="tools" >Insert: <button id="sigma">&Sigma;</button> <button id="delta">&delta;</button></div>
-
+    <div class="test1" style="display:inline-flex">
     <textarea id="automata-input" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
-    <div id="result-box">
-
+    <button type="button" class="getGram" onclick="">Get Grammar</button>
+    <textarea readonly id="automata-output" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
     </div>
-
     <script src="js/main.js"></script>
 </body>
 </html>
