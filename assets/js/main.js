@@ -508,44 +508,64 @@ initUI = function () {
 	// Target a single one
 	$("#rule-input").linedtextarea();
 	$("#automata-input").linedtextarea();
-
+/* Gibran
 	jQuery('.linedtextarea').on('focusin', function () { //JLV
 		document.getElementById('rule-output').value = "";
 	});
-
+*/
 	jQuery('.JLalpabhet').on('focusout', function () { //JLV
 		G.Sigma = this.value.split(",");
 		G.Sigma.push(EPSILON);
 		console.log(this.value.split(","));
 	}); //JLV
 
+	// Button to convert Grammar to Automata
 	jQuery('.getGram').on('click', function () { //JLV
-                var txt = "";
-                
-                var prodRules = "";
+		var txt = "";
+		var prodRules = "R = {\n";
                 
 		for (var index = 0; index < Object.keys(R).length; index++) {
 			var key =Object.keys(R)[index];
-                        prodRules += key + ": " + R[key] + "\n";
+            prodRules += " "+ key + " → " + R[key] + "\n";
 		}
-                txt = "V: " + V + "\n" + "Σ: " + Σ +"\n"+ "S: " + S +"\n"+prodRules;
-                document.getElementById('automata-output').value = txt;
+		prodRules += "}"
+		txt = "V = {"+ V +"}\n"
+		    + "Σ = {"+ Σ +"}\n"
+		    + "S = "+ S +"\n"
+		    + prodRules
+		    ;
+		document.getElementById('automata-output').value = txt;
 	}); //JLV
+	
+	// Button to convert Automata to Grammar
 	jQuery('.getTran').on('click', function () { //JLV
-                document.getElementById('rule-output').value = "";
+		parseRules(jQuery("#rule-input").val());
+        var txt  = "Q  = {"+ M.Q.join(",") +"}\n"
+		         + "F  = {"+ M.F.join(",") +"}\n"
+				 + "So = " + M.d0          +"\n"
+		         + "δ  = {\n";
+		
+		
 		for (var index = 0; index < Object.keys(M.Q).length; index++) {
 			for (var ine = 0; ine < Object.keys(M.Sigma).length; ine++) {
 				letra = M.Sigma[ine];
 				if (M.Delta[M.Q[index]][letra] != "" && M.Delta[M.Q[index]][letra] != undefined) {
-					document.getElementById('rule-output').value = document.getElementById('rule-output').value + "\n" + ("* d(" + M.Q[index] + ", " + letra + ") -> " + M.Delta[M.Q[index]][letra]);
+					 txt += (" d(" + M.Q[index] + ", " + letra + ") → " + M.Delta[M.Q[index]][letra]) + ",\n";
 				}
 			}
 		}
-
+		txt += "}\n";
+		
+		document.getElementById('rule-output').value = txt;
 	}); //JLV
-        initAutomataTxt = "Q:{A,B,C}\nΣ:{a,b}\nδ:{Axa->B,Axb->C,Bxb->C}\nSo:{A}\nF:{C}";
-        jQuery('#automata-input').val(initAutomataTxt);
-        parseAutomata(initAutomataTxt);
+
+	initAutomataTxt  = "Q:{A,B,C}\nΣ:{a,b}\nδ:{Axa->B,Axb->C,Bxb->C}\nSo:{A}\nF:{C}";
+	initGrammarTxt   = "S:aS|bB\nB:bB|ε\n";
+	initGrammarAlpha = "a,b";
+	jQuery('#automata-input').val(initAutomataTxt);
+	jQuery('#rule-input').val(initGrammarTxt);
+	jQuery('input.JLalpabhet').val(initGrammarAlpha);
+	parseAutomata(initAutomataTxt);
         
 }
 

@@ -1,51 +1,146 @@
 <!DOCTYPE html>
-<html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html lang="en">
+<!--<![endif]-->
 <head>
     <meta charset="utf-8">
-    <link   rel="stylesheet" href="styles/jquery-ui.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--[if IE]>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <![endif]-->
+    <link href="assets/css/jquery-ui.min.css" rel="stylesheet" >
     <!--
-    <link   rel="stylesheet" href="styles/jquery-ui.structure.min.css">
-    <link   rel="stylesheet" href="styles/jquery-ui.theme.min.css">
+    <link   rel="stylesheet" href="assets/css/jquery-ui.structure.min.css">
+    <link   rel="stylesheet" href="assets/css/jquery-ui.theme.min.css">
     -->
-    <link   rel="stylesheet" href="styles/jquery-linedtextarea.css">
-    <script src="js/jquery-3.1.1.min.js"></script>
-    <script src="js/jquery-ui.min.js"></script>
-    <script src="js/extentions.js"></script>
-    <script src="js/jquery-linedtextarea.js"></script>
+    <link href="assets/css/jquery-linedtextarea.css" rel="stylesheet" >
+     <!--REQUIRED STYLE SHEETS-->
+    <!-- BOOTSTRAP CORE STYLE CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+     <!-- FONTAWESOME STYLE CSS -->
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet" />
+       <!-- CUSTOM STYLE CSS -->
+    <link href="assets/css/style.css" rel="stylesheet" />
+     <!-- GOOGLE FONT -->
+     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
 
     <title>Proyecto Final</title>
     
 </head>
 
 <body>
+    <!--Header section  -->
+    <div class="container" id="home">
+      <div class="row text-center">
+        <div class="col-md-12" >
+          <h1 class="head-main"> <i class="fa fa-desktop fa-2x"></i> Team CPQ</h1>
+          <h2 class="head-sub-main">Final Project</h2> 
+        </div>
+      </div>
+    </div>
 
-    <p>Gramatic Rules:</p>
-    <div id="tools" >Insert: <button id="eps">&epsilon;</button></div>
-      Enter your alphabe separated by comma: <input type="text" class="JLalpabhet"><br>
-    <div class="test1" style="display:inline-flex">
-    <textarea id="rule-input" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
-    <button type="button" class="getTran" onclick="">Get Automata</button>
-    <textarea readonly id="rule-output" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
-    </div>
-    <div id="result-box">
+     <!-- Navigation -->
+      <nav class="navbar-inverse" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">#CPQ Team </a>
+            </div>
+            <!-- Collect the nav links for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="#g2a">Grammar to Automata</a>
+                    </li>
+                     <li><a href="#a2g">Automata to Grammar</a>
+                    </li>                    
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav> 
+     <!--End Navigation -->    
 
+    <!--End Header section  -->
+    
+    <!-- Article -->
+    <article class="container">
+    <section class="color-white">
+        <section class="color-white" id="g2a">
+            <h1>Grammar Rules</h1>
+                <br>
+            <div class="instructions">
+                <div class="input-group">
+                    <div class="input-group-addon">&Sigma; = {</div>
+                    <input type="text" class="JLalpabhet form-control" placeholder="a,b"
+                    data-toggle="tooltip" data-placement="top"
+                    title="Enter your alphabet separated by comma">
+                    <div class="input-group-addon">}</div>
+                </div> 
+            </div>
+            <br>
+            <div id="tools" >Insert: <button id="eps">&epsilon;</button></div>
+            <div class="test1" style="display:inline-flex">
+                <textarea id="rule-input" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
+                <button type="button" class="getTran" onclick="">Get Automata</button>
+                <textarea readonly id="rule-output" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
+            </div>
+        </section>
+        
+        <section class="color-white" id="a2g">
+            <h1>Automata</h1>
+            <p>Provide Automata on format </p>
+            <ul>
+                <li> Q:{A,B,C}</li>
+                <li>&Sigma;:{a,b}</li>
+                <li>&delta;:{Axa->B,Axb->C,Bxb->C}</li>
+                <li>So:{A}</li>
+                <li>F:{C}</li>
+            </ul>
+            <div id="tools" >Insert: <button id="sigma">&Sigma;</button> <button id="delta">&delta;</button></div>
+            <div class="test1" style="display:inline-flex">
+                <textarea id="automata-input" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
+                <button type="button" class="getGram" onclick="">Get Grammar</button>
+                <textarea readonly id="automata-output" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
+            </div>
+        </section>
+    </section>
+    </article>
+    <!-- End Article -->
+    
+    <!--footer Section -->
+    <div  class="for-full-back "  id="footer" >
+         2016 CPQ Team | All Right Reserved     
     </div>
-    <br>
-    <p>Automata:</p>
-    <p>Provide Automata on format </p>
-    <ul>
-        <li> Q:{A,B,C}</li>
-        <li>&Sigma;:{a,b}</li>
-        <li>&delta;:{Axa->B,Axb->C,Bxb->C}</li>
-        <li>So:{A}</li>
-        <li>F:{C}</li>
-    </ul>
-    <div id="tools" >Insert: <button id="sigma">&Sigma;</button> <button id="delta">&delta;</button></div>
-    <div class="test1" style="display:inline-flex">
-    <textarea id="automata-input" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
-    <button type="button" class="getGram" onclick="">Get Grammar</button>
-    <textarea readonly id="automata-output" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
-    </div>
-    <script src="js/main.js"></script>
+    <!--End footer Section -->
+    
+     <!-- JAVASCRIPT FILES PLACED AT THE BOTTOM TO REDUCE THE LOADING TIME  -->
+     <!-- CORE JQUERY  -->
+    <script src="assets/js/jquery-3.1.1.min.js"></script>
+    <script src="assets/js/jquery-ui.min.js"></script>
+    <script src="assets/js/extentions.js"></script>
+    
+     <!-- BOOTSTRAP CORE SCRIPT   -->
+    <script src="assets/plugins/bootstrap.js"></script>
+     <!-- CUSTOM SCRIPTS -->
+    <script src="assets/js/jquery-linedtextarea.js"></script>
+    <script src="assets/js/custom.js"></script>
+    <script src="assets/js/main.js"></script>
 </body>
 </html>
