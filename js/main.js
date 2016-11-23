@@ -84,19 +84,21 @@ parseAutomata = function (text) {
 						});
 						//console.log(temp);
 						$.each(m[2].split(separator), function (i, rule) {
-
-							if (V.indexOf(rule.substring(0, 1)) != -1 && Σ.indexOf(rule.substring(2, 3)) != -1 && V.indexOf(rule.substring(5, 6)) != -1) {
-								temp[rule.substring(0, 1)] = temp[rule.substring(0, 1)] + rule.substring(2, 3) + rule.substring(5, 6) + "|";
+                                                        var varsRegex2 = /(.+)x(.+)->(.+)/;
+                                                        var match = rule.match(varsRegex2);
+                                                        
+							if (V.indexOf(match[1]) != -1 && Σ.indexOf(match[2]) != -1 && V.indexOf(match[3]) != -1) {
+								temp[match[1]] = temp[match[1]] + match[2] + match[3] + "|";
 
 							} else {
-								if (V.indexOf(rule.substring(0, 1)) == -1) {
-									console.log("State " + rule.substring(0, 1) + " not in V");
+								if (V.indexOf(match[1]) == -1) {
+									console.log("State " + match[1] + " not in V");
 								}
-								if (V.indexOf(rule.substring(5, 6)) == -1) {
-									console.log("State " + rule.substring(5, 6) + " not in V");
+								if (V.indexOf(match[3]) == -1) {
+									console.log("State " + match[3] + " not in V");
 								}
-								if (Σ.indexOf(rule.substring(2, 3)) == -1) {
-									console.log("Symbol " + rule.substring(2, 3) + " not in Σ");
+								if (Σ.indexOf(match[2]) == -1) {
+									console.log("Symbol " + match[2] + " not in Σ");
 								}
 								error = true;
 							}
@@ -114,31 +116,40 @@ parseAutomata = function (text) {
 				case 'So':
 					//console.log("So");
 					//S
-					if (Object.keys(m[2].split(separator)).length == 1) {
-						S = m[2].split(separator);
-					} else {
-						if (Object.keys(m[2].split(separator)).length == 0) {
-							console.log("No initial State provided");
-						} else {
-							console.log("Multiple initial States provided");
-						}
-						error = true;
-					}
+                                        if (V.length != 0) {
+                                                if (Object.keys(m[2].split(separator)).length == 1) {
+                                                        var Si = m[2].split(separator)[0];
+                                                        if(V.indexOf(Si)!= -1){
+                                                                S=Si;
+                                                        }else{
+                                                                console.log("State " + Si + " not in V");
+                                                        }
+                                                } else {
+                                                        if (Object.keys(m[2].split(separator)).length == 0) {
+                                                                console.log("No initial State provided");
+                                                        } else {
+                                                                console.log("Multiple initial States provided");
+                                                        }
+                                                        error = true;
+                                                }
+                                        }
+					
 
 					//console.log("S: " + S);
 					break;
 				case 'F':
 					//console.log("F");
 					$.each(m[2].split(separator), function (i, rule) {
-						if (V.indexOf(rule.substring(0, 1)) != -1) {
-							if (temp[rule.substring(0, 1)] == "") {
-								temp[rule.substring(0, 1)] = "ε";
+                                                //console.log(rule);
+						if (V.indexOf(rule) != -1) {
+							if (temp[rule] == "") {
+								temp[rule] = "ε";
 							} else {
-								temp[rule.substring(0, 1)] = temp[rule.substring(0, 1)] + "|ε";
+								temp[rule] = temp[rule] + "|ε";
 							}
 
 						} else {
-							console.log("State not in V");
+							console.log("State "+rule+" not in V");
 							error = true;
 						}
 					});
@@ -159,11 +170,11 @@ parseAutomata = function (text) {
 				}
 				if (!error && Σ != undefined && S != undefined) {
 					R = temp;
-					console.log("Σ: " + Σ);
-					console.log("S: " + S);
-					console.log("R: ");
-					console.log(R);
-					console.log("V: " + V);
+					//console.log("Σ: " + Σ);
+					//console.log("S: " + S);
+					//console.log("R: ");
+					//console.log(R);
+					//console.log("V: " + V);
 				}
 			} else {
 				console.log("Format error detected");
