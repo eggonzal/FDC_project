@@ -31,7 +31,9 @@ textarea {
   font-size: 10pt;
 }
 .instructions {
-          
+  border-radius: 15px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .nav a {

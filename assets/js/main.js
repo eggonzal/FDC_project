@@ -498,6 +498,9 @@ initUI = function () {
 	$('#eps').click(function (e) {
 		return insertSymbolIntoText("ε", $("#rule-input"), e);
 	});
+	$('#pipe').click(function (e) {
+		return insertSymbolIntoText("|", $("#rule-input"), e);
+	});
 	$('#sigma').click(function (e) {
 		return insertSymbolIntoText("Σ", $("#automata-input"), e);
 	});

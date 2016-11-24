@@ -60,14 +60,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">#CPQ Team </a>
+                <a class="navbar-brand" href="#">#TeamCPQ </a>
             </div>
             <!-- Collect the nav links for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="#g2a">Grammar to Automata</a>
+                    <li><a href="#g2a">Grammar → Automata</a>
                     </li>
-                     <li><a href="#a2g">Automata to Grammar</a>
+                     <li><a href="#a2g">Automata → Grammar</a>
                     </li>                    
                 </ul>
             </div>
@@ -83,19 +83,34 @@
     <article class="container">
     <section class="color-white">
         <section class="color-white" id="g2a">
-            <h1>Grammar Rules</h1>
+            <h1>Grammar → Automata</h1>
                 <br>
-            <div class="instructions">
-                <div class="input-group">
-                    <div class="input-group-addon">&Sigma; = {</div>
-                    <input type="text" class="JLalpabhet form-control" placeholder="a,b"
-                    data-toggle="tooltip" data-placement="top"
-                    title="Enter your alphabet separated by comma">
-                    <div class="input-group-addon">}</div>
-                </div> 
+            <div class="instructions color-light">
+              <span aria-hidden="true" class="glyphicon glyphicon-info-sign"></span>
+              The Regular Grammar can be entered as follows:
+              <br>
+              <ul>
+                <li><i>&lt;variable&gt;:&lt;symbol from &Sigma;&gt;&lt;variable&gt;</i></li>
+                <li><i>&lt;variable&gt;:&lt;symbol from &Sigma;&gt;</i></li>
+                <li><i>&lt;variable&gt;:&epsilon;</i></li>
+              </ul>
+              <br>
+              <span aria-hidden="true" class="glyphicon glyphicon-info-sign"></span>
+              Multiple rules can be entered for the same variable, separated by |
+              <br>
+              <ul style="list-style-type: none;">
+                <li><strong>Example</strong> A:aB|a|&epsilon;</li>
+              </ul>
             </div>
+            <div class="input-group">
+                <div class="input-group-addon">&Sigma; = {</div>
+                <input type="text" class="JLalpabhet form-control" placeholder="a,b"
+                data-toggle="tooltip" data-placement="top"
+                title="Enter your alphabet separated by comma">
+                <div class="input-group-addon">}</div>
+            </div> 
             <br>
-            <div id="tools" >Insert: <button id="eps">&epsilon;</button></div>
+            <div id="tools" >Insert: <button id="eps">&epsilon;</button> <button id="pipe">|</button></div>
             <div class="test1" style="display:inline-flex">
                 <textarea id="rule-input" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
                 <button type="button" class="getTran" onclick="">Get Automata</button>
@@ -104,15 +119,19 @@
         </section>
         
         <section class="color-white" id="a2g">
-            <h1>Automata</h1>
-            <p>Provide Automata on format </p>
-            <ul>
-                <li> Q:{A,B,C}</li>
-                <li>&Sigma;:{a,b}</li>
-                <li>&delta;:{Axa->B,Axb->C,Bxb->C}</li>
-                <li>So:{A}</li>
-                <li>F:{C}</li>
-            </ul>
+            <h1>Automata → Grammar</h1>
+            <div class="instructions color-light">
+              <span aria-hidden="true" class="glyphicon glyphicon-info-sign"></span>
+              Provide Automata on format
+              <br>
+              <ul style="list-style-type: none;">
+                  <li> Q:{A,B,C}</li>
+                  <li>&Sigma;:{a,b}</li>
+                  <li>&delta;:{Axa->B,Axb->C,Bxb->C}</li>
+                  <li>So:{A}</li>
+                  <li>F:{C}</li>
+              </ul>
+            </div>
             <div id="tools" >Insert: <button id="sigma">&Sigma;</button> <button id="delta">&delta;</button></div>
             <div class="test1" style="display:inline-flex">
                 <textarea id="automata-input" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;"></textarea>
@@ -126,7 +145,7 @@
     
     <!--footer Section -->
     <div  class="for-full-back "  id="footer" >
-         2016 CPQ Team | All Right Reserved     
+         2016 Team CPQ | All Right Reserved     
     </div>
     <!--End footer Section -->
     
